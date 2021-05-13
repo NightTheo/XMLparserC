@@ -7,6 +7,7 @@
 
 char *getElementOpenTag(char * string);
 char * getElementName(char * tag);
+int8_t isElementSelfClosing(char* tag);
 
 
 #endif //XMLPARSER_PARSER_H

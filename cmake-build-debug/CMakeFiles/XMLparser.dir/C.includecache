@@ -6,31 +6,17 @@
 
 #IncludeRegexTransform: 
 
-/Users/theo/Documents/Projets/SummerCamp 2021/XMLparser/main.c
-stdio.h
--
+/Users/theo/Documents/Projets/SummerCamp 2021/XMLparser/parser.c
 string.h
 -
 stdlib.h
 -
-test.h
-/Users/theo/Documents/Projets/SummerCamp 2021/XMLparser/test.h
-parser.h
-/Users/theo/Documents/Projets/SummerCamp 2021/XMLparser/parser.h
-
-/Users/theo/Documents/Projets/SummerCamp 2021/XMLparser/parser.c
-string.h
--
-parser.h
-/Users/theo/Documents/Projets/SummerCamp 2021/XMLparser/parser.h
-
-/Users/theo/Documents/Projets/SummerCamp 2021/XMLparser/parser.h
-
-/Users/theo/Documents/Projets/SummerCamp 2021/XMLparser/test.c
 stdio.h
 -
-test.h
-/Users/theo/Documents/Projets/SummerCamp 2021/XMLparser/test.h
+stdint.h
+-
+parser.h
+/Users/theo/Documents/Projets/SummerCamp 2021/XMLparser/parser.h
 
-/Users/theo/Documents/Projets/SummerCamp 2021/XMLparser/test.h
+/Users/theo/Documents/Projets/SummerCamp 2021/XMLparser/parser.h
 
