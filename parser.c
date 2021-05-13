@@ -8,7 +8,7 @@
 #include <stdint.h>
 #include "parser.h"
 
-char *getElementOpenTag(char * string) {
+char *getFirstOpenTag(char * string) {
     char *open, *close;
     char *tag = malloc(sizeof(char)*32);
     if (tag == NULL) return NULL;
@@ -63,6 +63,22 @@ char * getElement(char *openTag, char *string){
     free(tagName); free(closeTag);
     tagName = closeTag = NULL;
     return element;
+}
+
+char * getInnerElement(char *element){
+    if(isElementSelfClosing(element))
+        return malloc(sizeof(char)*0);
+
+    char * openTag = getFirstOpenTag(element);
+    char * closeTag = generateCloseTag(openTag);
+
+    char * inner = malloc(sizeof(char) * (strlen(element) - strlen(openTag) - strlen(closeTag)));
+    if(inner == NULL) return NULL;
+    strncpy(inner, element+strlen(openTag), strlen(element) - strlen(openTag) - strlen(closeTag));
+
+    free(openTag); free(closeTag);
+    openTag = closeTag = NULL;
+    return inner;
 }
 
 

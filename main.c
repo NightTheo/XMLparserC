@@ -7,15 +7,17 @@
 int main(int argc, char **argv) {
 
     start();
-    char * string = stringPerson();
+    char * string = stringSelfClosingElementOneAttribute();
     printf("\n*%s", string);
-    char *tag = getElementOpenTag(string);
+    char *tag = getFirstOpenTag(string);
     printf("\n*%s", tag);
-
 
     char * element = getElement(tag, string);
     printf("\n*%s*", element);
 
-    free(tag); free(element);
+    char * inner = getInnerElement(element);
+    printf("\ninner: *%s*", inner);
+
+    free(tag); free(element); free(inner);
     return 0;
 }
