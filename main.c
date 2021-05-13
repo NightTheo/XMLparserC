@@ -13,12 +13,13 @@ int main(int argc, char **argv) {
     printf("\n*%s", tag);
     char *name = getElementName(tag);
     printf("\n*%s", name);
-    //char *element = getElementName(string);
-    //char closeTag[32];
 
+    char * closeTag = generateCloseTag(name);
+    printf("\n*%s", closeTag);
 
-    //printf("\n*%s*", element);
+    char * element = getElement(tag, string);
+    printf("\n*%s*", element);
 
-    free(tag); free(name);
+    free(tag); free(name); free(closeTag); free(element);
     return 0;
 }

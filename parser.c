@@ -35,4 +35,32 @@ int8_t isElementSelfClosing(char* tag){
         return 0;
 }
 
+char * generateCloseTag(char * tagName){
+    char *closeTag = malloc(sizeof(char)*32);
+    if(closeTag == NULL) return NULL;
+
+    sprintf(closeTag, "</%s>", tagName);
+    return closeTag;
+
+}
+
+char * getElement(char *openTag, char *string){
+    if(isElementSelfClosing(openTag))
+        return openTag;
+
+    char * tagName = getElementName(openTag);
+    char * closeTag = generateCloseTag(tagName);
+    char * element = malloc(sizeof(char)*250);
+    if(element == NULL) return NULL;
+
+    char * positionOpenTab = strstr(string, openTag);
+    char * positionCloseTab = strstr(string, closeTag);
+
+    strncpy(element, positionOpenTab, positionCloseTab - positionOpenTab + strlen(closeTag));
+
+    free(tagName); free(closeTag);
+    tagName = closeTag = NULL;
+    return element;
+}
+
 
