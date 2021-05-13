@@ -7,19 +7,15 @@
 int main(int argc, char **argv) {
 
     start();
-    char * string = stringSimpleElement();
+    char * string = stringPerson();
     printf("\n*%s", string);
     char *tag = getElementOpenTag(string);
     printf("\n*%s", tag);
-    char *name = getElementName(tag);
-    printf("\n*%s", name);
 
-    char * closeTag = generateCloseTag(name);
-    printf("\n*%s", closeTag);
 
     char * element = getElement(tag, string);
     printf("\n*%s*", element);
 
-    free(tag); free(name); free(closeTag); free(element);
+    free(tag); free(element);
     return 0;
 }

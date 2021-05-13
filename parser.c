@@ -45,8 +45,10 @@ char * generateCloseTag(char * tagName){
 }
 
 char * getElement(char *openTag, char *string){
-    if(isElementSelfClosing(openTag))
-        return openTag;
+    if(isElementSelfClosing(openTag)){
+        char * element = malloc(sizeof(char) * strlen(openTag));
+        return strcpy(element, openTag);
+    }
 
     char * tagName = getElementName(openTag);
     char * closeTag = generateCloseTag(tagName);
