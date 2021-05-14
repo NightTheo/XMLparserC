@@ -9,12 +9,11 @@ int main(int argc, char **argv) {
     start();
     char * string = stringSelfClosingElementTwoAttributes();
     char *tag = getFirstStartTag(string);
-    printf("\n%s", tag);
+    printf("\n%s\n", tag);
     char * element = getElement(tag, string);
 
-    char * inner = getInnerElement(element);
-    printf("\ninner: *%s*", inner);
+    getAttributes(tag);
 
-    free(tag); free(element); free(inner);
+    free(tag); free(element);
     return 0;
 }

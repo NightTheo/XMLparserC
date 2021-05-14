@@ -34,7 +34,6 @@ char * getElementName(char * tag) {
 }
 
 int8_t isElementSelfClosing(char* tag){
-    printf("%s", tag);
     return tag[strlen(tag)-2] == '/' ? 1 : 0;
 }
 
@@ -86,4 +85,46 @@ char * getInnerElement(char *element){
     return inner;
 }
 
+char * getInnerTag(char *tag){
+    char *tagName = getElementName(tag);
+    uint8_t end = isElementSelfClosing(tag) ? 2 : 3;
+    uint8_t sizeInner = strlen(tag) - strlen(tagName) - 2 - end;
+    char *inner = malloc(sizeof(char) * sizeInner);
+    if(inner == NULL) return NULL;
+
+    strncpy(inner, tag + strlen(tagName) + 2, sizeInner);
+    free(tagName);
+    return inner;
+}
+
+void getAttributes(char *tag){
+    char *innerTag = getInnerTag(tag);
+    char *space = innerTag;
+    uint8_t nbAttributes = 0;
+    while ((space = strstr(space, "\" ")+2) != NULL) {
+        nbAttributes++;
+        printf("*%s*\n", space);
+        space++;
+    }
+    free(innerTag);
+}
+
+
+char **createArrayString(int8_t sizeArray, int16_t sizeString){
+    char **array = malloc(sizeof(char*) * sizeArray);
+    if(array == NULL) return NULL;
+
+    for(int i = 0; i < sizeArray; i++){
+        array[i] = malloc(sizeof(char)*sizeString);
+        if(array[i] == NULL)
+            freeStringArray(array, i);
+    }
+}
+
+void freeStringArray(char **stringArray, int index){
+    for(int i = 0; i < index; i++)
+        free(stringArray[i]);
+    free(stringArray);
+    stringArray = NULL;
+}
 
