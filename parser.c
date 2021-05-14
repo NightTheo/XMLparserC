@@ -20,10 +20,15 @@ char *getFirstOpenTag(char * string) {
 }
 
 char * getElementName(char * tag) {
+    char *firstSpace;
     char *name = malloc(sizeof(char)*32);
     if (name == NULL) return NULL;
     int8_t end = isElementSelfClosing(tag) ? 3 : 2;
     strncpy(name, tag+1, strlen(tag)-end); // -3 if self-closing, else -2
+    firstSpace = strchr(name, ' ');
+    if(firstSpace != NULL)
+        *firstSpace = '\0';
+
     //check if the name starts with xml => error: forbidden
     return name;
 }
@@ -70,14 +75,15 @@ char * getInnerElement(char *element){
         return malloc(sizeof(char)*0);
 
     char * openTag = getFirstOpenTag(element);
-    char * closeTag = generateCloseTag(openTag);
+    char * nameTag = getElementName(openTag);
+    char * closeTag = generateCloseTag(nameTag);
 
     char * inner = malloc(sizeof(char) * (strlen(element) - strlen(openTag) - strlen(closeTag)));
     if(inner == NULL) return NULL;
     strncpy(inner, element+strlen(openTag), strlen(element) - strlen(openTag) - strlen(closeTag));
 
-    free(openTag); free(closeTag);
-    openTag = closeTag = NULL;
+    free(openTag); free(nameTag); free(closeTag);
+    openTag = nameTag = closeTag = NULL;
     return inner;
 }
 
