@@ -39,3 +39,14 @@ char *stringSelfClosingElementOneAttribute() {
 char *stringSelfClosingElementTwoAttributes() {
     return "<book category=\"web\" title=\"Clean Code\"/>";
 }
+
+char *stringSelfClosingElementThreeAttributes() {
+    return "<book category=\"web\" title=\"Clean Code\" author=\"Robert C. Martin\"/>";
+}
+
+void printStringArray(char** array, int sizeArray){
+    printf("\n--String Array--\n");
+    for(int i = 0; i < sizeArray; i++)
+        printf("%d*%s*\n",i, array[i]);
+    printf("--end of array--\n");
+}

@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "parser.h"
+#include "test.h"
 
 char *getFirstStartTag(char * string) {
     char *open, *close;
@@ -25,6 +26,7 @@ char * getElementName(char * tag) {
     if (name == NULL) return NULL;
     int8_t end = isElementSelfClosing(tag) ? 3 : 2;
     strncpy(name, tag+1, strlen(tag)-end); // -3 if self-closing, else -2
+    name[strlen(tag)-end] = '\0';
     firstSpace = strchr(name, ' ');
     if(firstSpace != NULL)
         *firstSpace = '\0';
@@ -61,6 +63,7 @@ char * getElement(char *startTag, char *string){
     char * positionCloseTab = strstr(string, closeTag);
 
     strncpy(element, positionOpenTab, positionCloseTab - positionOpenTab + strlen(closeTag));
+    element[positionCloseTab - positionOpenTab + strlen(closeTag)] = '\0';
 
     free(tagName); free(closeTag);
     tagName = closeTag = NULL;
@@ -79,6 +82,7 @@ char * getInnerElement(char *element){
     if(inner == NULL) return NULL;
 
     strncpy(inner, element+strlen(startTag), strlen(element) - strlen(startTag) - strlen(endTag));
+    inner[strlen(element) - strlen(startTag) - strlen(endTag)] = '\0';
 
     free(startTag); free(nameTag); free(endTag);
     startTag = nameTag = endTag = NULL;
@@ -93,20 +97,101 @@ char * getInnerTag(char *tag){
     if(inner == NULL) return NULL;
 
     strncpy(inner, tag + strlen(tagName) + 2, sizeInner);
+    inner[sizeInner] = '\0';
     free(tagName);
     return inner;
 }
 
-void getAttributes(char *tag){
+char **getAttributes(char *tag){
+    int nbAttributes = getNbAttributes(tag);
+    if(nbAttributes == 0)
+        return NULL;
+
     char *innerTag = getInnerTag(tag);
-    char *space = innerTag;
-    uint8_t nbAttributes = 0;
-    while ((space = strstr(space, "\" ")+2) != NULL) {
-        nbAttributes++;
-        printf("*%s*\n", space);
-        space++;
+    char **splitEqual = splitString("=", innerTag, nbAttributes+1, 100);
+    char **splitTag = splitInnerTag(splitEqual, nbAttributes+1);
+    char **attributes = joinSplittedTag(nbAttributes, splitTag);
+
+    printStringArray(splitTag, 2*(nbAttributes+1)-2);
+    printStringArray(attributes, nbAttributes);
+
+    free(innerTag); free(splitEqual); free(splitTag);
+    return attributes;
+}
+
+/*
+ * transform:
+ * attribute1
+ * "value1" attribute2
+ * "value2" attribute3
+ * "value3"
+ *
+ * to:
+ * attribute1
+ * "value1"
+ * attribute2
+ * "value2"
+ * attribute3
+ * "value3"
+ * */
+char **splitInnerTag(char **splitEqual, int sizeSplitEqualArray){
+    int sizeNewArray = 2*sizeSplitEqualArray -2;
+    char **split = createArrayString(sizeNewArray, 100);
+    strcpy(split[0], splitEqual[0]);
+
+    int nbSpaces, index = 1;
+    char *border, end[100];
+    for(int i = 1; i < sizeSplitEqualArray-1; i++){
+        nbSpaces = countCharInString(' ',splitEqual[i]);
+        char **splitSpace = splitString(" ", splitEqual[i], nbSpaces+1, 100);
+        strcpy(end, splitSpace[nbSpaces]);
+        border = strstr(splitEqual[i], end) -1;
+        strncpy(split[index], splitEqual[i], border - splitEqual[i]);
+        split[index++][border - splitEqual[i]] = '\0';
+        strcpy(split[index++], end);
     }
-    free(innerTag);
+    strcpy(split[index], splitEqual[sizeSplitEqualArray-1]);
+    return split;
+}
+
+char **splitString(char *separators, char *string, int sizeArray, int sizeString){
+    char **split = createArrayString(sizeArray, sizeString);
+    char *copy = copyString(string);
+    char * strToken = strtok ( copy, separators);
+
+    uint8_t i = 0;
+    while ( strToken != NULL ) {
+        strcpy(split[i], strToken);
+        strToken = strtok ( NULL, separators);
+        i++;
+    }
+    free(copy);
+    copy = NULL;
+    return split;
+}
+
+char **joinSplittedTag(int nbAttributes, char**splitTag){
+    char **attributes = createArrayString(nbAttributes, 100);
+    char buffer[100];
+    for(int i = 0; i < nbAttributes*2; i+=2){
+        sprintf(buffer, "%s=%s", splitTag[i], splitTag[i+1]);
+        strcpy(attributes[i/2], buffer);
+    }
+    return attributes;
+}
+
+int countCharInString(char delimiter, char *string){
+    int count = 0;
+    char *cursor = string;
+    while((cursor = strchr(cursor, delimiter)) != NULL){
+        count++;
+        cursor++;
+    }
+    return count;
+}
+
+int getNbAttributes(char *tag){
+    return countCharInString('=', tag);
 }
 
 
@@ -119,6 +204,7 @@ char **createArrayString(int8_t sizeArray, int16_t sizeString){
         if(array[i] == NULL)
             freeStringArray(array, i);
     }
+    return array;
 }
 
 void freeStringArray(char **stringArray, int index){
@@ -128,3 +214,8 @@ void freeStringArray(char **stringArray, int index){
     stringArray = NULL;
 }
 
+char *copyString(char *string){
+    char *new = malloc(sizeof(char) * strlen(string));
+    if(new == NULL) return NULL;
+    return strcpy(new, string);
+}

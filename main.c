@@ -7,7 +7,7 @@
 int main(int argc, char **argv) {
 
     start();
-    char * string = stringSelfClosingElementTwoAttributes();
+    char * string = stringSelfClosingElementThreeAttributes();
     char *tag = getFirstStartTag(string);
     printf("\n%s\n", tag);
     char * element = getElement(tag, string);

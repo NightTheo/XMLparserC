@@ -11,5 +11,7 @@ char * stringPerson();
 char * stringPersonWithAttribute();
 char *stringSelfClosingElementOneAttribute();
 char *stringSelfClosingElementTwoAttributes();
+char *stringSelfClosingElementThreeAttributes();
+void printStringArray(char** array, int sizeArray);
 
 #endif //XMLPARSER_TEST_H
