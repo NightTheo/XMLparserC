@@ -11,9 +11,8 @@
 
 
 void XMLparseString(char *xml){
-    char *string = copyString(xml);
-    char *cursor = string;
-    char *prolog = getProlog(string);
+    char *cursor = xml;
+    char *prolog = getProlog(xml);
     if(prolog != NULL)
         cursor += strlen(prolog)+1;
 
@@ -21,10 +20,12 @@ void XMLparseString(char *xml){
         puts("Error");
         return;
     }
-    
 
-
-    free(string);
+    char *rootTag = getFirstStartTag(cursor);
+    char *rootName = getElementName(rootTag);
+    Element root = {rootName, NULL, NULL, NULL, NULL};
+    printElement(root);
+    free(rootName); free(rootTag);
 }
 
 uint8_t countElements(char* string){

@@ -1,6 +1,7 @@
 //
 // Created by Théo Omnès on 13/05/2021.
 //
+#include <stdint.h>
 
 #ifndef XMLPARSER_PARSER_H
 #define XMLPARSER_PARSER_H
@@ -20,6 +21,7 @@ struct Element {
     char *text;
     Attribute *attributes;
     Element *brother;
+    Element *child;
 };
 
 void XMLparseString(char *xml);

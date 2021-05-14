@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include "test.h"
+#include "parser.h"
 
 void start() {
     printf("-----  XMLparser  -----\n");
@@ -67,4 +68,12 @@ char *noteWithProlog() {
            "  <heading>Reminder</heading>\n"
            "  <body>Don't forget me this weekend!</body>\n"
            "</note>";
+}
+
+void printElement(struct Element element){
+    printf("\nname: *%s*", element.name == NULL ? NULL : element.name );
+    printf("\ntext: *%s*", element.text == NULL ? NULL : element.text );
+    printf("\nattributes: *%s*", element.attributes == NULL ? NULL : element.attributes->key );
+    printf("\nbrother: *%s*", element.brother == NULL ? NULL : element.brother->name );
+    printf("\nchild: *%s*", element.child == NULL ? NULL : element.child->name );
 }

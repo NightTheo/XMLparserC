@@ -1,6 +1,7 @@
 //
 // Created by Théo Omnès on 13/05/2021.
 //
+#include "parser.h"
 
 #ifndef XMLPARSER_TEST_H
 #define XMLPARSER_TEST_H
@@ -17,7 +18,7 @@ char *stringSelfClosingElementThreeAttributes();
 void printStringArray(char** array, int sizeArray);
 char *simpleProlog();
 char *noteWithProlog();
-
+void printElement(struct Element element);
 
 
 #endif //XMLPARSER_TEST_H
