@@ -13,5 +13,9 @@ char *stringSelfClosingElementOneAttribute();
 char *stringSelfClosingElementTwoAttributes();
 char *stringSelfClosingElementThreeAttributes();
 void printStringArray(char** array, int sizeArray);
+char *simpleProlog();
+char *noteWithProlog();
+
+
 
 #endif //XMLPARSER_TEST_H

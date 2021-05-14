@@ -216,3 +216,17 @@ char *copyString(char *string){
     if(new == NULL) return NULL;
     return strcpy(new, string);
 }
+
+int8_t prologExists(char *string){
+    char *prolog = getFirstStartTag(string);
+    char *name = getElementName(prolog);
+    int8_t result = strcmp(name, "?xml") == 0 && strcmp(prolog+strlen(prolog)-2, "?>") == 0;
+    free(prolog); free(name);
+    return result;
+}
+
+char *getProlog(char *string){
+    if(!prologExists(string))
+        return NULL;
+    return getFirstStartTag(string);
+}

@@ -7,15 +7,18 @@
 int main(int argc, char **argv) {
 
     start();
-    char * string = stringSelfClosingElementThreeAttributes();
+    char * string = noteWithProlog();
 
-    char *tag = getFirstStartTag(string);
-    char *element = getElement(tag, string);
-    char **attributes = getAttributes(tag);
+    char *prolog = getProlog(string);
+    if(prolog == NULL)
+        puts("Pas de prologue");
+    else {
+        char **attributesProlog = getAttributes(prolog);
 
-    puts(element);
-    printStringArray(attributes, getNbAttributes(tag));
+        printStringArray(attributesProlog, getNbAttributes(prolog));
 
-    free(tag); free(element); free(attributes);
+        freeStringArray(attributesProlog, getNbAttributes(prolog));
+        free(prolog);
+    }
     return 0;
 }

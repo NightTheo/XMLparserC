@@ -50,3 +50,17 @@ void printStringArray(char** array, int sizeArray){
         printf("%d*%s*\n",i, array[i]);
     printf("--end of array--\n");
 }
+
+char *simpleProlog() {
+    return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+}
+
+char *noteWithProlog() {
+    return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+           "<note>\n"
+           "  <to>Tove</to>\n"
+           "  <from>Jani</from>\n"
+           "  <heading>Reminder</heading>\n"
+           "  <body>Don't forget me this weekend!</body>\n"
+           "</note>";
+}

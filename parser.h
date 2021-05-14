@@ -21,6 +21,8 @@ int countCharInString(char delimiter, char *string);
 char **splitInnerTag(char **splitEqual, int sizeSplitArray);
 char **joinSplittedTag(int nbAttributes, char**splitTag);
 char * getInnerTag(char *tag);
+int8_t prologExists(char *string);
+char *getProlog(char *string);
 
 
 #endif //XMLPARSER_PARSER_H
