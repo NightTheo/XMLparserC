@@ -6,6 +6,8 @@
 #define XMLPARSER_TEST_H
 
 void start();
+
+char * simpleString();
 char * stringSimpleElement();
 char * stringPerson();
 char * stringPersonWithAttribute();

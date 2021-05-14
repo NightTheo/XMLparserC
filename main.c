@@ -8,17 +8,7 @@ int main(int argc, char **argv) {
 
     start();
     char * string = noteWithProlog();
+    XMLparseString(string);
 
-    char *prolog = getProlog(string);
-    if(prolog == NULL)
-        puts("Pas de prologue");
-    else {
-        char **attributesProlog = getAttributes(prolog);
-
-        printStringArray(attributesProlog, getNbAttributes(prolog));
-
-        freeStringArray(attributesProlog, getNbAttributes(prolog));
-        free(prolog);
-    }
     return 0;
 }

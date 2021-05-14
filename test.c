@@ -9,6 +9,10 @@ void start() {
     printf("-----  XMLparser  -----\n");
 }
 
+char * simpleString(){
+    return "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+}
+
 char * stringProlog(){
     return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 }

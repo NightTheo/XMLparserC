@@ -9,10 +9,44 @@
 #include "parser.h"
 #include "test.h"
 
+
+void XMLparseString(char *xml){
+    char *string = copyString(xml);
+    char *cursor = string;
+    char *prolog = getProlog(string);
+    if(prolog != NULL)
+        cursor += strlen(prolog)+1;
+
+    if(countElements(cursor) != 1){
+        puts("Error");
+        return;
+    }
+    
+
+
+    free(string);
+}
+
+uint8_t countElements(char* string){
+    char *curStartTag, *curElement;
+    uint16_t count = 0;
+    while((curStartTag = getFirstStartTag(string)) != NULL){
+        count++;
+        curElement = getElement(curStartTag, string);
+        string = strstr(string, curStartTag);
+        string += strlen(curElement)+1;
+        free(curStartTag); free(curElement);
+    }
+    return count;
+}
+
 char *getFirstStartTag(char * string) {
     char *open, *close;
     open = strchr(string, '<');
     close = strchr( string, '>');
+    if(open == NULL || close == NULL)
+        return NULL;
+
     char *tag = malloc(sizeof(char)*(close-open));
     if (tag == NULL) return NULL;
     strncpy(tag, open, close - open + 1);
@@ -61,6 +95,8 @@ char * getElement(char *startTag, char *string){
 
     char * positionOpenTab = strstr(string, startTag);
     char * positionCloseTab = strstr(string, closeTag);
+    if(positionOpenTab == NULL || positionCloseTab == NULL)
+        return NULL;
 
     strncpy(element, positionOpenTab, positionCloseTab - positionOpenTab + strlen(closeTag));
     element[positionCloseTab - positionOpenTab + strlen(closeTag)] = '\0';
@@ -219,6 +255,8 @@ char *copyString(char *string){
 
 int8_t prologExists(char *string){
     char *prolog = getFirstStartTag(string);
+    if(prolog == NULL)
+        return 0;
     char *name = getElementName(prolog);
     int8_t result = strcmp(name, "?xml") == 0 && strcmp(prolog+strlen(prolog)-2, "?>") == 0;
     free(prolog); free(name);

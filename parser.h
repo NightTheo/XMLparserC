@@ -15,13 +15,15 @@ struct Attribute{
     struct Attribute *next;
 };
 
-typedef struct Element {
+struct Element {
     char *name;
     char *text;
     Attribute *attributes;
     Element *brother;
 };
 
+void XMLparseString(char *xml);
+uint8_t countElements(char* string);
 char *getFirstStartTag(char * string);
 char * getElementName(char * tag);
 int8_t isElementSelfClosing(char* tag);
