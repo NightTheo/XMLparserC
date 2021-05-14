@@ -8,12 +8,12 @@
 #include <stdint.h>
 #include "parser.h"
 
-char *getFirstOpenTag(char * string) {
+char *getFirstStartTag(char * string) {
     char *open, *close;
-    char *tag = malloc(sizeof(char)*32);
-    if (tag == NULL) return NULL;
     open = strchr(string, '<');
     close = strchr( string, '>');
+    char *tag = malloc(sizeof(char)*(close-open));
+    if (tag == NULL) return NULL;
     strncpy(tag, open, close - open + 1);
     tag[close - open + 1] = '\0';
     return tag;
@@ -21,7 +21,7 @@ char *getFirstOpenTag(char * string) {
 
 char * getElementName(char * tag) {
     char *firstSpace;
-    char *name = malloc(sizeof(char)*32);
+    char *name = malloc(sizeof(char)*64);
     if (name == NULL) return NULL;
     int8_t end = isElementSelfClosing(tag) ? 3 : 2;
     strncpy(name, tag+1, strlen(tag)-end); // -3 if self-closing, else -2
@@ -34,13 +34,11 @@ char * getElementName(char * tag) {
 }
 
 int8_t isElementSelfClosing(char* tag){
-    if(tag[strlen(tag)-2] == '/')
-        return 1;
-    else
-        return 0;
+    printf("%s", tag);
+    return tag[strlen(tag)-2] == '/' ? 1 : 0;
 }
 
-char * generateCloseTag(char * tagName){
+char * generateEndTag(char * tagName){
     char *closeTag = malloc(sizeof(char)*32);
     if(closeTag == NULL) return NULL;
 
@@ -49,18 +47,18 @@ char * generateCloseTag(char * tagName){
 
 }
 
-char * getElement(char *openTag, char *string){
-    if(isElementSelfClosing(openTag)){
-        char * element = malloc(sizeof(char) * strlen(openTag));
-        return strcpy(element, openTag);
+char * getElement(char *startTag, char *string){
+    if(isElementSelfClosing(startTag)){
+        char * element = malloc(sizeof(char)*strlen(startTag));
+        if(element == NULL) return NULL;
+        return strcpy(element, startTag);
     }
-
-    char * tagName = getElementName(openTag);
-    char * closeTag = generateCloseTag(tagName);
+    char * tagName = getElementName(startTag);
+    char * closeTag = generateEndTag(tagName);
     char * element = malloc(sizeof(char)*250);
     if(element == NULL) return NULL;
 
-    char * positionOpenTab = strstr(string, openTag);
+    char * positionOpenTab = strstr(string, startTag);
     char * positionCloseTab = strstr(string, closeTag);
 
     strncpy(element, positionOpenTab, positionCloseTab - positionOpenTab + strlen(closeTag));
@@ -72,18 +70,19 @@ char * getElement(char *openTag, char *string){
 
 char * getInnerElement(char *element){
     if(isElementSelfClosing(element))
-        return malloc(sizeof(char)*0);
+        return malloc(sizeof(char)*0); // empty string
 
-    char * openTag = getFirstOpenTag(element);
-    char * nameTag = getElementName(openTag);
-    char * closeTag = generateCloseTag(nameTag);
+    char * startTag = getFirstStartTag(element);
+    char * nameTag = getElementName(startTag);
+    char * endTag = generateEndTag(nameTag);
 
-    char * inner = malloc(sizeof(char) * (strlen(element) - strlen(openTag) - strlen(closeTag)));
+    char * inner = malloc(sizeof(char) * (strlen(element) - strlen(startTag) - strlen(endTag)));
     if(inner == NULL) return NULL;
-    strncpy(inner, element+strlen(openTag), strlen(element) - strlen(openTag) - strlen(closeTag));
 
-    free(openTag); free(nameTag); free(closeTag);
-    openTag = nameTag = closeTag = NULL;
+    strncpy(inner, element+strlen(startTag), strlen(element) - strlen(startTag) - strlen(endTag));
+
+    free(startTag); free(nameTag); free(endTag);
+    startTag = nameTag = endTag = NULL;
     return inner;
 }
 
