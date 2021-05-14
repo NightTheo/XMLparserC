@@ -91,7 +91,7 @@ char * getInnerElement(char *element){
 
 char * getInnerTag(char *tag){
     char *tagName = getElementName(tag);
-    uint8_t end = isElementSelfClosing(tag) ? 2 : 3;
+    uint8_t end = isElementSelfClosing(tag) ? 2 : 1;
     uint8_t sizeInner = strlen(tag) - strlen(tagName) - 2 - end;
     char *inner = malloc(sizeof(char) * sizeInner);
     if(inner == NULL) return NULL;
@@ -111,9 +111,6 @@ char **getAttributes(char *tag){
     char **splitEqual = splitString("=", innerTag, nbAttributes+1, 100);
     char **splitTag = splitInnerTag(splitEqual, nbAttributes+1);
     char **attributes = joinSplittedTag(nbAttributes, splitTag);
-
-    printStringArray(splitTag, 2*(nbAttributes+1)-2);
-    printStringArray(attributes, nbAttributes);
 
     free(innerTag); free(splitEqual); free(splitTag);
     return attributes;

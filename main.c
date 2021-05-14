@@ -8,12 +8,14 @@ int main(int argc, char **argv) {
 
     start();
     char * string = stringSelfClosingElementThreeAttributes();
+
     char *tag = getFirstStartTag(string);
-    printf("\n%s\n", tag);
-    char * element = getElement(tag, string);
+    char *element = getElement(tag, string);
+    char **attributes = getAttributes(tag);
 
-    getAttributes(tag);
+    puts(element);
+    printStringArray(attributes, getNbAttributes(tag));
 
-    free(tag); free(element);
+    free(tag); free(element); free(attributes);
     return 0;
 }

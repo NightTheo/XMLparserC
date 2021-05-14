@@ -20,6 +20,7 @@ char **splitString(char *separators, char *string, int sizeArray, int sizeString
 int countCharInString(char delimiter, char *string);
 char **splitInnerTag(char **splitEqual, int sizeSplitArray);
 char **joinSplittedTag(int nbAttributes, char**splitTag);
+char * getInnerTag(char *tag);
 
 
 #endif //XMLPARSER_PARSER_H
