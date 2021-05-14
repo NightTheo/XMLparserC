@@ -5,6 +5,23 @@
 #ifndef XMLPARSER_PARSER_H
 #define XMLPARSER_PARSER_H
 
+typedef struct Attribute Attribute;
+typedef struct Children Children;
+typedef struct Element Element;
+
+struct Attribute{
+    char *key;
+    char *value;
+    struct Attribute *next;
+};
+
+typedef struct Element {
+    char *name;
+    char *text;
+    Attribute *attributes;
+    Element *brother;
+};
+
 char *getFirstStartTag(char * string);
 char * getElementName(char * tag);
 int8_t isElementSelfClosing(char* tag);
