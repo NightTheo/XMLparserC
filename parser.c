@@ -24,20 +24,47 @@ void XMLparseString(char *xml){
     char *rootTag = getFirstStartTag(cursor);
     char *rootName = getElementName(rootTag);
     Element root = {rootName, NULL, NULL, NULL, NULL};
-    printElement(root);
-    free(rootName); free(rootTag);
+
+    browseXMLRecursively(cursor);
+
+    free(rootName); free(rootTag); free(prolog);
 }
 
-uint8_t countElements(char* string){
-    char *curStartTag, *curElement;
-    uint16_t count = 0;
-    while((curStartTag = getFirstStartTag(string)) != NULL){
-        count++;
-        curElement = getElement(curStartTag, string);
-        string = strstr(string, curStartTag);
-        string += strlen(curElement)+1;
-        free(curStartTag); free(curElement);
+void browseXMLRecursively(char *element){
+    char *inner = getInnerElement(element);
+    int nbSubElements = countElements(inner);
+    if(nbSubElements == 0){
+        puts(inner);
     }
+    else{
+        char *cpyInner = copyString(inner);
+        char *curElement, *cursor = cpyInner;
+        while((curElement = getFirstElement(cursor)) != NULL){
+            cursor = strstr(cursor, curElement);
+            cursor += strlen(curElement)-1;
+            browseXMLRecursively(curElement);
+            free(curElement);
+        }
+        free(cpyInner);
+    }
+
+    free(inner);
+}
+
+
+uint8_t countElements(char* string){
+    char *cpyString = copyString(string);
+    char *start = cpyString;
+    char *curElement;
+    int count = 0;
+    while((curElement = getFirstElement(cpyString)) != NULL ){
+        count++;
+        cpyString = strstr(string, curElement);
+        cpyString += strlen(curElement);
+        free(curElement);
+        curElement = NULL;
+    }
+    free(start);
     return count;
 }
 
@@ -48,6 +75,10 @@ char *getFirstStartTag(char * string) {
     if(open == NULL || close == NULL)
         return NULL;
 
+    if(close-open < 0){ // find '>' before '<'
+        close = strchr(close+1, '>');   // find the next '>'
+        if(close == NULL) return NULL;
+    }
     char *tag = malloc(sizeof(char)*(close-open));
     if (tag == NULL) return NULL;
     strncpy(tag, open, close - open + 1);
@@ -85,7 +116,7 @@ char * generateEndTag(char * tagName){
 
 char * getElement(char *startTag, char *string){
     if(isElementSelfClosing(startTag)){
-        char * element = malloc(sizeof(char)*strlen(startTag));
+        char * element = malloc(sizeof(char)*strlen(startTag)+1);
         if(element == NULL) return NULL;
         return strcpy(element, startTag);
     }
@@ -96,14 +127,25 @@ char * getElement(char *startTag, char *string){
 
     char * positionOpenTab = strstr(string, startTag);
     char * positionCloseTab = strstr(string, closeTag);
-    if(positionOpenTab == NULL || positionCloseTab == NULL)
+    if(positionOpenTab == NULL || positionCloseTab == NULL){
+        free(tagName); free(closeTag);
         return NULL;
+    }
 
     strncpy(element, positionOpenTab, positionCloseTab - positionOpenTab + strlen(closeTag));
     element[positionCloseTab - positionOpenTab + strlen(closeTag)] = '\0';
 
     free(tagName); free(closeTag);
     tagName = closeTag = NULL;
+    return element;
+}
+
+char * getFirstElement(char *string){
+    char *firstStartTag = getFirstStartTag(string);
+    if(firstStartTag == NULL)
+        return NULL;
+    char *element = getElement(firstStartTag, string);
+    free(firstStartTag);
     return element;
 }
 
@@ -251,7 +293,9 @@ void freeStringArray(char **stringArray, int index){
 char *copyString(char *string){
     char *new = malloc(sizeof(char) * strlen(string));
     if(new == NULL) return NULL;
-    return strcpy(new, string);
+    strncpy(new, string, strlen(string));
+    new[strlen(string)] = '\0';
+    return new;
 }
 
 int8_t prologExists(char *string){
