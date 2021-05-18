@@ -23,7 +23,8 @@ void XMLparseString(char *xml){
     }
 
     puts(cursor);
-    browseXMLRecursively(cursor, NULL);
+    Element *node = browseXMLRecursively(cursor, NULL);
+    printElement(*node->elderChild);
 
     free(prolog);
 }
@@ -41,13 +42,12 @@ Element *browseXMLRecursively(char *element, Element *brother){
         char *cpyInner = copyString(inner);
         char *curElement = getFirstElement(inner);
         Element *child = newElementFromString(curElement, NULL);
-        node->elderChild = child;
         char *cursor = cpyInner + strlen(curElement);
         free(curElement);
-        while((curElement = getFirstElement(cursor)) != NULL){
-            child = newElementFromString(curElement, child);
-            browseXMLRecursively(curElement, child);
 
+        while((curElement = getFirstElement(cursor)) != NULL){
+            child = browseXMLRecursively(curElement, child);
+            node->elderChild = child;
             cursor = strstr(cursor, curElement);
             cursor += strlen(curElement)-1;
             free(curElement);
