@@ -17,54 +17,88 @@ void XMLparseString(char *xml){
         cursor += strlen(prolog)+1;
 
     if(countElements(cursor) != 1){
-        puts("Error");
+        free(prolog);
+        puts("Error, more than 1 root element");
         return;
     }
 
-    char *rootTag = getFirstStartTag(cursor);
-    char *rootName = getElementName(rootTag);
-    Element root = {rootName, NULL, NULL, NULL, NULL};
+    puts(cursor);
+    browseXMLRecursively(cursor, NULL);
 
-    browseXMLRecursively(cursor);
-
-    free(rootName); free(rootTag); free(prolog);
+    free(prolog);
 }
 
-void browseXMLRecursively(char *element){
+Element *browseXMLRecursively(char *element, Element *brother){
     char *inner = getInnerElement(element);
     int nbSubElements = countElements(inner);
-    if(nbSubElements == 0){
-        puts(inner);
+    Element *node = newElementFromString(element, brother);
+
+    if(nbSubElements == 0){ // no children
+        node->text = inner;
+        return node;
     }
     else{
         char *cpyInner = copyString(inner);
-        char *curElement, *cursor = cpyInner;
+        char *curElement = getFirstElement(inner);
+        Element *child = newElementFromString(curElement, NULL);
+        node->elderChild = child;
+        char *cursor = cpyInner + strlen(curElement);
+        free(curElement);
         while((curElement = getFirstElement(cursor)) != NULL){
+            child = newElementFromString(curElement, child);
+            browseXMLRecursively(curElement, child);
+
             cursor = strstr(cursor, curElement);
             cursor += strlen(curElement)-1;
-            browseXMLRecursively(curElement);
             free(curElement);
         }
         free(cpyInner);
     }
-
     free(inner);
+    return node;
 }
 
 
+Element *newElement(char *name, char *text, char **attributes, Element *littleBrother, Element *elderChild){
+    Element *newElement = malloc(sizeof(Element) * 1);
+    if(newElement == NULL) return NULL;
+
+    newElement->name = name;
+    newElement->text = text;
+    newElement->attributes = attributes;
+    newElement->littleBrother = littleBrother;
+    newElement->elderChild = elderChild;
+
+    return newElement;
+}
+
+Element *newElementFromString(char *stringElement, Element *brother){
+    char *inner = getInnerElement(stringElement);
+    int nbSubElements = countElements(inner);
+    char *name = getElementName(stringElement);
+    char **attributes = getAttributes(stringElement);
+    char *text;
+    if(nbSubElements > 0){
+        text = NULL;
+        free(inner);
+    }else
+        text = inner;
+
+    return newElement(name, text, attributes, brother, NULL);
+}
+
 uint8_t countElements(char* string){
-    char *cpyString = copyString(string);
-    char *start = cpyString;
+    char *ptr1 = string;
+    char *ptr2 = string;
     char *curElement;
     int count = 0;
-    while((curElement = getFirstElement(cpyString)) != NULL ){
+    while((curElement = getFirstElement(ptr1)) != NULL){
         count++;
-        cpyString = strstr(string, curElement);
-        cpyString += strlen(curElement);
+        ptr2 = strstr(ptr1, curElement);
+        ptr1 = ptr2;
+        ptr1 += strlen(curElement);
         free(curElement);
-        curElement = NULL;
     }
-    free(start);
     return count;
 }
 
@@ -86,7 +120,7 @@ char *getFirstStartTag(char * string) {
     return tag;
 }
 
-char * getElementName(char * tag) {
+char * getElementNameByTag(char * tag) {
     char *firstSpace;
     char *name = malloc(sizeof(char)*64);
     if (name == NULL) return NULL;
@@ -97,7 +131,15 @@ char * getElementName(char * tag) {
     if(firstSpace != NULL)
         *firstSpace = '\0';
 
-    //check if the name starts with xml => error: forbidden
+    return name;
+}
+
+char *getElementName(char *element){
+    char *tag = getFirstStartTag(element);
+    if(tag == NULL) return NULL;
+    char *name = getElementNameByTag(tag);
+    if(name == NULL) return NULL;
+    free(tag);
     return name;
 }
 
@@ -120,7 +162,7 @@ char * getElement(char *startTag, char *string){
         if(element == NULL) return NULL;
         return strcpy(element, startTag);
     }
-    char * tagName = getElementName(startTag);
+    char * tagName = getElementNameByTag(startTag);
     char * closeTag = generateEndTag(tagName);
     char * element = malloc(sizeof(char)*250);
     if(element == NULL) return NULL;
@@ -154,7 +196,7 @@ char * getInnerElement(char *element){
         return malloc(sizeof(char)*0); // empty string
 
     char * startTag = getFirstStartTag(element);
-    char * nameTag = getElementName(startTag);
+    char * nameTag = getElementNameByTag(startTag);
     char * endTag = generateEndTag(nameTag);
 
     char * inner = malloc(sizeof(char) * (strlen(element) - strlen(startTag) - strlen(endTag)));
@@ -169,7 +211,7 @@ char * getInnerElement(char *element){
 }
 
 char * getInnerTag(char *tag){
-    char *tagName = getElementName(tag);
+    char *tagName = getElementNameByTag(tag);
     uint8_t end = isElementSelfClosing(tag) ? 2 : 1;
     uint8_t sizeInner = strlen(tag) - strlen(tagName) - 2 - end;
     char *inner = malloc(sizeof(char) * sizeInner);
@@ -181,7 +223,7 @@ char * getInnerTag(char *tag){
     return inner;
 }
 
-char **getAttributes(char *tag){
+char **getAttributesByTag(char *tag){
     int nbAttributes = getNbAttributes(tag);
     if(nbAttributes == 0)
         return NULL;
@@ -192,6 +234,15 @@ char **getAttributes(char *tag){
     char **attributes = joinSplittedTag(nbAttributes, splitTag);
 
     free(innerTag); free(splitEqual); free(splitTag);
+    return attributes;
+}
+
+char **getAttributes(char *element){
+    char *tag = getFirstStartTag(element);
+    if(tag == NULL) return NULL;
+    char **attributes = getAttributesByTag(tag);
+    if(attributes == NULL) return NULL;
+    free(tag);
     return attributes;
 }
 
@@ -302,7 +353,7 @@ int8_t prologExists(char *string){
     char *prolog = getFirstStartTag(string);
     if(prolog == NULL)
         return 0;
-    char *name = getElementName(prolog);
+    char *name = getElementNameByTag(prolog);
     int8_t result = strcmp(name, "?xml") == 0 && strcmp(prolog+strlen(prolog)-2, "?>") == 0;
     free(prolog); free(name);
     return result;

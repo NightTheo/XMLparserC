@@ -73,7 +73,9 @@ char *noteWithProlog() {
 void printElement(struct Element element){
     printf("\nname: *%s*", element.name == NULL ? NULL : element.name );
     printf("\ntext: *%s*", element.text == NULL ? NULL : element.text );
-    printf("\nattributes: *%s*", element.attributes == NULL ? NULL : element.attributes->key );
-    printf("\nbrother: *%s*", element.brother == NULL ? NULL : element.brother->name );
-    printf("\nchild: *%s*", element.child == NULL ? NULL : element.child->name );
+    printf("\nattributes: ");
+    if(element.attributes == NULL) printf("*(null)*");
+    else printStringArray(element.attributes, 3);
+    printf("\nbrother: *%s*", element.littleBrother == NULL ? NULL : element.littleBrother->name );
+    printf("\nchild: *%s*", element.elderChild == NULL ? NULL : element.elderChild->name );
 }

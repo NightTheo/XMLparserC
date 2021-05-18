@@ -19,22 +19,26 @@ struct Attribute{
 struct Element {
     char *name;
     char *text;
-    Attribute *attributes;
-    Element *brother;
-    Element *child;
+    char **attributes;
+    Element *littleBrother;
+    Element *elderChild;
 };
 
 void XMLparseString(char *xml);
-void browseXMLRecursively(char *element);
+Element *browseXMLRecursively(char *element, Element *brother);
+Element *newElement(char *name, char *text, char **attributes, Element *littleBrother, Element *elderChild);
+Element *newElementFromString(char *stringElement, Element *brother);
 uint8_t countElements(char* string);
 char *getFirstStartTag(char * string); //m
-char * getElementName(char * tag); //m
+char * getElementNameByTag(char * tag); //m
+char *getElementName(char *element); //m
 int8_t isElementSelfClosing(char* tag);
 char * generateEndTag(char * tagName); //m
 char * getElement(char *openTag, char *string); //m
 char * getFirstElement(char *string); //m
 char * getInnerElement(char *element); //m
-char **getAttributes(char *tag); //m
+char **getAttributesByTag(char *tag); //m
+char **getAttributes(char *element); //m
 char **createArrayString(int8_t sizeArray, int16_t sizeString); //m
 void freeStringArray(char **stringArray, int index);
 int getNbAttributes(char *tag);
