@@ -62,15 +62,20 @@ void freeXML(XML *xml){
         freeStringArray(xml->prolog, 2); // ! \\ WARNING : HAS TO BE CHANGED
 
     if(xml->root != NULL)
-        freeElementRecursively(xml->root);
+        freeElementRecursively(&(xml->root));
 }
 
-void freeElementRecursively(Element *node){
-    struct Element *ptr = node;
-    while(ptr != NULL){
-        printf("%s ", ptr->name );
-        ptr = ptr->brother;
-        freeElementRecursively(ptr);
+void freeElementRecursively(Element **node){
+    while((*node)->child != NULL){
+        freeElement(node);
+    }
+}
+
+void freeElement(Element **node){
+    if(*node != NULL){
+        Element *remove = *node;
+        *node = (*node)->child;
+        free(remove);
     }
 }
 

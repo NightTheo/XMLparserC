@@ -34,7 +34,8 @@ struct XML {
 XML *XMLparseString(char *xml);
 Element *browseXMLRecursively(char *element, Element *brother);
 void freeXML(XML *xml);
-void freeElementRecursively(Element *node);
+void freeElementRecursively(Element **node);
+void freeElement(Element **node);
 Element *newElement(char *name, char *text, char **attributes, Element *littleBrother, Element *elderChild);
 Element *newElementFromString(char *stringElement, Element *brother);
 uint8_t countElements(char* string);
