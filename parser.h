@@ -9,6 +9,7 @@
 typedef struct Attribute Attribute;
 typedef struct Children Children;
 typedef struct Element Element;
+typedef struct XML XML;
 
 struct Attribute{
     char *key;
@@ -20,12 +21,20 @@ struct Element {
     char *name;
     char *text;
     char **attributes;
-    Element *littleBrother;
-    Element *elderChild;
+    Element *brother;
+    Element *child;
 };
 
-void XMLparseString(char *xml);
+
+struct XML {
+    char **prolog;
+    Element *root;
+};
+
+XML *XMLparseString(char *xml);
 Element *browseXMLRecursively(char *element, Element *brother);
+void freeXML(XML *xml);
+void freeElementRecursively(Element *node);
 Element *newElement(char *name, char *text, char **attributes, Element *littleBrother, Element *elderChild);
 Element *newElementFromString(char *stringElement, Element *brother);
 uint8_t countElements(char* string);

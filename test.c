@@ -76,6 +76,6 @@ void printElement(struct Element element){
     printf("\nattributes: ");
     if(element.attributes == NULL) printf("*(null)*");
     else printStringArray(element.attributes, 3);
-    printf("\nbrother: *%s*", element.littleBrother == NULL ? NULL : element.littleBrother->name );
-    printf("\nelderChild: *%s*", element.elderChild == NULL ? NULL : element.elderChild->name );
+    printf("\nbrother: *%s*", element.brother == NULL ? NULL : element.brother->name );
+    printf("\nchild: *%s*", element.child == NULL ? NULL : element.child->name );
 }

@@ -10,54 +10,69 @@
 #include "test.h"
 
 
-void XMLparseString(char *xml){
-    char *cursor = xml;
-    char *prolog = getProlog(xml);
-    if(prolog != NULL)
-        cursor += strlen(prolog)+1;
-
-    if(countElements(cursor) != 1){
-        free(prolog);
-        puts("Error, more than 1 root element");
-        return;
+XML *XMLparseString(char *xmlString){
+    XML *xml = malloc(sizeof(XML));
+    if(xml == NULL) return NULL;
+    char *cursor = xmlString;
+    char *prologTag = getProlog(xmlString);
+    if(prologTag == NULL)
+        xml->prolog = NULL;
+    else {
+        xml->prolog = getAttributesByTag(prologTag);
+        cursor += strlen(prologTag);
+        free(prologTag);
     }
+    if(countElements(cursor) != 1){
+        puts("Error, more than 1 root element");
+        return NULL;
+    }
+    xml->root = browseXMLRecursively(cursor, NULL);
+    return xml;
 
-    puts(cursor);
-    Element *node = browseXMLRecursively(cursor, NULL);
-    printElement(*node->elderChild);
-
-    free(prolog);
 }
 
 Element *browseXMLRecursively(char *element, Element *brother){
     char *inner = getInnerElement(element);
     int nbSubElements = countElements(inner);
     Element *node = newElementFromString(element, brother);
-
     if(nbSubElements == 0){ // no children
         node->text = inner;
         return node;
     }
     else{
-        char *cpyInner = copyString(inner);
         char *curElement = getFirstElement(inner);
         Element *child = newElementFromString(curElement, NULL);
-        char *cursor = cpyInner + strlen(curElement);
+        char *cursor = inner + strlen(curElement);
         free(curElement);
 
         while((curElement = getFirstElement(cursor)) != NULL){
-            child = browseXMLRecursively(curElement, child);
-            node->elderChild = child;
+            child = browseXMLRecursively(curElement, child); // set the precedent child found to the brother of the new one
+            node->child = child;
             cursor = strstr(cursor, curElement);
             cursor += strlen(curElement)-1;
             free(curElement);
         }
-        free(cpyInner);
     }
     free(inner);
     return node;
 }
 
+void freeXML(XML *xml){
+    if(xml->prolog != NULL)
+        freeStringArray(xml->prolog, 2); // ! \\ WARNING : HAS TO BE CHANGED
+
+    if(xml->root != NULL)
+        freeElementRecursively(xml->root);
+}
+
+void freeElementRecursively(Element *node){
+    struct Element *ptr = node;
+    while(ptr != NULL){
+        printf("%s ", ptr->name );
+        ptr = ptr->brother;
+        freeElementRecursively(ptr);
+    }
+}
 
 Element *newElement(char *name, char *text, char **attributes, Element *littleBrother, Element *elderChild){
     Element *newElement = malloc(sizeof(Element) * 1);
@@ -66,8 +81,8 @@ Element *newElement(char *name, char *text, char **attributes, Element *littleBr
     newElement->name = name;
     newElement->text = text;
     newElement->attributes = attributes;
-    newElement->littleBrother = littleBrother;
-    newElement->elderChild = elderChild;
+    newElement->brother = littleBrother;
+    newElement->child = elderChild;
 
     return newElement;
 }

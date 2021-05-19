@@ -8,7 +8,9 @@ int main(int argc, char **argv) {
 
     start();
     char * string = noteWithProlog();
-    XMLparseString(string);
+    puts(string);
 
+    XML *xml = XMLparseString(string);
+    freeElementRecursively(xml->root->child);
     return 0;
 }
