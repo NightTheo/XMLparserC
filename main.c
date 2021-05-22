@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
     puts(string);
 
     XML *xml = XMLparseString(string);
-    cleanXML(&xml);
+    //cleanXML(&xml);
 
     return 0;
 }
