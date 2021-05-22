@@ -23,15 +23,24 @@ XML *XMLparseString(char *xmlString){
         free(prologTag);
     }
     if(countElements(cursor) != 1){
-        puts("Error, more than 1 root element");
+        puts("Error, ONE root element is required");
         return NULL;
     }
-    xml->root = browseXMLRecursively(cursor, NULL);
+    xml->root = newElementsTree(cursor, NULL);
     return xml;
 
 }
 
-Element *browseXMLRecursively(char *element, Element *brother){
+void cleanXML(XML **xml){
+    XML *tmpXml = *xml;
+    if(!xml) return;
+    if(tmpXml->root) cleanElementsTree(&tmpXml->root);
+    // free prolog
+    free(tmpXml);
+    xml = NULL;
+}
+
+Element *newElementsTree(char *element, Element *brother){
     char *inner = getInnerElement(element);
     int nbSubElements = countElements(inner);
     Element *node = newElementFromString(element, brother);
@@ -39,37 +48,33 @@ Element *browseXMLRecursively(char *element, Element *brother){
         node->text = inner;
         return node;
     }
-    else{
-        char *curElement = getFirstElement(inner);
-        Element *child = newElementFromString(curElement, NULL);
-        char *cursor = inner + strlen(curElement);
-        free(curElement);
-
-        while((curElement = getFirstElement(cursor)) != NULL){
-            child = browseXMLRecursively(curElement, child); // set the precedent child found to the brother of the new one
-            node->child = child;
-            cursor = strstr(cursor, curElement);
-            cursor += strlen(curElement)-1;
-            free(curElement);
-        }
+    else{   // has children
+        setElementChildren(node, inner);
     }
     free(inner);
     return node;
 }
 
-void freeXML(XML *xml){
-    if(xml->prolog != NULL)
-        freeStringArray(xml->prolog, 2); // ! \\ WARNING : HAS TO BE CHANGED
+void setElementChildren(Element *father, char *innerElement){
+    char *curElement = getFirstElement(innerElement);
+    Element *child = newElementFromString(curElement, NULL);
+    char *cursor = innerElement + strlen(curElement);
+    free(curElement);
 
-    if(xml->root != NULL)
-        freeElementRecursively(&(xml->root));
+    while((curElement = getFirstElement(cursor)) != NULL){
+        child = newElementsTree(curElement, child); // set the precedent child found to the brother of the new one
+        father->child = child;
+        cursor = strstr(cursor, curElement);
+        cursor += strlen(curElement)-1;
+        free(curElement);
+    }
 }
 
-void freeElementRecursively(Element **node){
+void cleanElementsTree(Element **node){
     Element *remove = *node;
     if(!node) return;
-    if(remove->brother)     freeElementRecursively(&remove->brother);
-    if(remove->child)     freeElementRecursively(&remove->child);
+    if(remove->brother) cleanElementsTree(&remove->brother);
+    if(remove->child) cleanElementsTree(&remove->child);
     freeElement(node);
 }
 

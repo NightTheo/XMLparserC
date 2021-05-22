@@ -32,34 +32,35 @@ struct XML {
 };
 
 XML *XMLparseString(char *xml);
-Element *browseXMLRecursively(char *element, Element *brother);
-void freeXML(XML *xml);
-void freeElementRecursively(Element **node);
+Element *newElementsTree(char *element, Element *brother);
+void setElementChildren(Element *father, char *innerElement);
+void cleanXML(XML **xml);
+void cleanElementsTree(Element **node);
 void freeElement(Element **node);
 Element *newElement(char *name, char *text, char **attributes, Element *littleBrother, Element *elderChild);
 Element *newElementFromString(char *stringElement, Element *brother);
 uint8_t countElements(char* string);
-char *getFirstStartTag(char * string); //m
-char * getElementNameByTag(char * tag); //m
-char *getElementName(char *element); //m
+char *getFirstStartTag(char * string);
+char * getElementNameByTag(char * tag);
+char *getElementName(char *element);
 int8_t isElementSelfClosing(char* tag);
-char * generateEndTag(char * tagName); //m
-char * getElement(char *openTag, char *string); //m
-char * getFirstElement(char *string); //m
-char * getInnerElement(char *element); //m
-char **getAttributesByTag(char *tag); //m
-char **getAttributes(char *element); //m
-char **createArrayString(int8_t sizeArray, int16_t sizeString); //m
+char * generateEndTag(char * tagName);
+char * getElement(char *openTag, char *string);
+char * getFirstElement(char *string);
+char * getInnerElement(char *element);
+char **getAttributesByTag(char *tag);
+char **getAttributes(char *element);
+char **createArrayString(int8_t sizeArray, int16_t sizeString);
 void freeStringArray(char **stringArray, int index);
 int getNbAttributes(char *tag);
-char *copyString(char *string); //m
-char **splitString(char *separators, char *string, int sizeArray, int sizeString); //m
+char *copyString(char *string);
+char **splitString(char *separators, char *string, int sizeArray, int sizeString);
 int countCharInString(char delimiter, char *string);
-char **splitInnerTag(char **splitEqual, int sizeSplitArray); //m
-char **joinSplittedTag(int nbAttributes, char**splitTag); //m
-char * getInnerTag(char *tag); //m
+char **splitInnerTag(char **splitEqual, int sizeSplitArray);
+char **joinSplittedTag(int nbAttributes, char**splitTag);
+char * getInnerTag(char *tag);
 int8_t prologExists(char *string);
-char *getProlog(char *string); //m
+char *getProlog(char *string);
 
 
 #endif //XMLPARSER_PARSER_H
