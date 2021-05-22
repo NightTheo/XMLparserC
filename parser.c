@@ -84,7 +84,7 @@ void freeElement(Element **node){
         if(remove->name) free(remove->name);
         if(remove->text) free(remove->text);
         free(remove);
-        remove = NULL;
+        node = NULL;
     }
 }
 
