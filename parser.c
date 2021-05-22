@@ -18,7 +18,7 @@ XML *XMLparseString(char *xmlString){
     if(prologTag == NULL)
         xml->prolog = NULL;
     else {
-        xml->prolog = getAttributesByTag(prologTag);
+        //xml->prolog = getAttributesByTag(prologTag);
         cursor += strlen(prologTag);
         free(prologTag);
     }
@@ -66,9 +66,12 @@ void freeXML(XML *xml){
 }
 
 void freeElementRecursively(Element **node){
-    while((*node)->child != NULL){
-        freeElement(node);
-    }
+    Element *remove = *node;
+    if(!node) return;
+    if(remove->brother)     freeElementRecursively(&remove->brother);
+    if(remove->child)     freeElementRecursively(&remove->child);
+    free(remove);
+    node = NULL;
 }
 
 void freeElement(Element **node){
@@ -85,7 +88,7 @@ Element *newElement(char *name, char *text, char **attributes, Element *littleBr
 
     newElement->name = name;
     newElement->text = text;
-    newElement->attributes = attributes;
+    //newElement->attributes = attributes;
     newElement->brother = littleBrother;
     newElement->child = elderChild;
 
@@ -96,7 +99,7 @@ Element *newElementFromString(char *stringElement, Element *brother){
     char *inner = getInnerElement(stringElement);
     int nbSubElements = countElements(inner);
     char *name = getElementName(stringElement);
-    char **attributes = getAttributes(stringElement);
+    //char **attributes = getAttributes(stringElement);
     char *text;
     if(nbSubElements > 0){
         text = NULL;
@@ -104,7 +107,7 @@ Element *newElementFromString(char *stringElement, Element *brother){
     }else
         text = inner;
 
-    return newElement(name, text, attributes, brother, NULL);
+    return newElement(name, text, NULL, brother, NULL);
 }
 
 uint8_t countElements(char* string){

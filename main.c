@@ -12,5 +12,6 @@ int main(int argc, char **argv) {
 
     XML *xml = XMLparseString(string);
     freeElementRecursively(&(xml->root));
+
     return 0;
 }

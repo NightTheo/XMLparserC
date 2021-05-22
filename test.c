@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 #include "test.h"
-#include "parser.h"
+//#include "parser.h"
 
 void start() {
     printf("-----  XMLparser  -----\n");
