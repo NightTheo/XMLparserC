@@ -70,15 +70,16 @@ void freeElementRecursively(Element **node){
     if(!node) return;
     if(remove->brother)     freeElementRecursively(&remove->brother);
     if(remove->child)     freeElementRecursively(&remove->child);
-    free(remove);
-    node = NULL;
+    freeElement(node);
 }
 
 void freeElement(Element **node){
     if(*node != NULL){
         Element *remove = *node;
-        *node = (*node)->child;
+        if(remove->name) free(remove->name);
+        if(remove->text) free(remove->text);
         free(remove);
+        remove = NULL;
     }
 }
 
