@@ -1,4 +1,0 @@
-"/Users/theo/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/202.7660.37/CLion.app/Contents/bin/cmake/mac/bin/cmake" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" "/Users/theo/Documents/Projets/SummerCamp 2021/XMLparser"
--- Configuring done
--- Generating done
--- Build files have been written to: /Users/theo/Documents/Projets/SummerCamp 2021/XMLparser/cmake-build-debug

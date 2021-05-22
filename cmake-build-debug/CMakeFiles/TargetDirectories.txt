@@ -1,3 +1,0 @@
-/Users/theo/Documents/Projets/SummerCamp 2021/XMLparser/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/Users/theo/Documents/Projets/SummerCamp 2021/XMLparser/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/theo/Documents/Projets/SummerCamp 2021/XMLparser/cmake-build-debug/CMakeFiles/XMLparser.dir
